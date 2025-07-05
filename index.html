@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>仮定法4択テスト（正答表示あり）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2em;
+      background-color: #fefeff;
+      display: flex;
+      justify-content: center;
+    }
+
+    #quiz {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 2em;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .question {
+      font-weight: bold;
+      font-size: 1.3em;
+      margin-bottom: 1.5em;
+      color: #333;
+    }
+
+    .choice {
+      margin: 0.5em 0;
+      padding: 0.8em 1em;
+      background: #e9eaff;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: all 0.2s;
+      font-size: 1em;
+    }
+
+    .choice:hover:not(:disabled) {
+      background: #d4d6ff;
+    }
+
+    .choice.correct {
+      background-color: #d4f8d4;
+      border-color: #58c758;
+    }
+
+    .choice.wrong {
+      background-color: #ffdede;
+      border-color: #ff6b6b;
+    }
+
+    .result {
+      margin-top: 1.5em;
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #555;
+    }
+
+    #nextBtn {
+      display: inline-block;
+      margin-top: 1.5em;
+      padding: 0.8em 1.5em;
+      font-size: 1em;
+      border: none;
+      background-color: #6c63ff;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #nextBtn:hover {
+      background-color: #5750e5;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1em;
+      }
+
+      #quiz {
+        padding: 1.2em;
+      }
+
+      .question {
+        font-size: 1.1em;
+      }
+
+      .choice {
+        font-size: 0.95em;
+      }
+
+      #nextBtn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="choices"></div>
+    <div id="result" class="result"></div>
+    <button id="nextBtn" onclick="nextQuestion()" style="display:none;">次の問題へ →</button>
+  </div>
+
+  <script>
+    const questions = [
+      { q: "「もし〜ならば…だろう」に対応する英文の形は？", correct: 2, choices: [
+        "If S had 過去分詞, S would have 過去分詞",
+        "If it were not for 名詞, S would 原形",
+        "If S 過去, S would 原形",
+        "I wish S 過去"
+      ]},
+      { q: "「もしその時〜だったならば…だっただろう」に対応する英文の形は？", correct: 0, choices: [
+        "If S had 過去分詞, S would have 過去分詞",
+        "If S 過去, S would 原形",
+        "If only S 過去",
+        "It is time S 過去"
+      ]},
+      { q: "「万一〜だったら…だろう」に対応する英文の形は？", correct: 1, choices: [
+        "If S had 過去分詞, S would 原形",
+        "If S should 原形, S would 原形",
+        "If it were not for 名詞, S would 原形",
+        "I wish S had 過去分詞"
+      ]},
+      { q: "「仮に〜だったら…だろう」に対応する英文の形は？", correct: 3, choices: [
+        "If S 過去, S would have 過去分詞",
+        "If only S had 過去分詞",
+        "It is high time S 過去",
+        "If S were to 原形, S would 原形"
+      ]},
+      { q: "「もしAがなければ…だろう」に対応する英文の形は？", correct: 1, choices: [
+        "If it had not been for A, S would have 過去分詞",
+        "If it were not for A, S would 原形",
+        "If S should 原形, S would 原形",
+        "If only S 過去"
+      ]},
+      { q: "「もしあの時Aがなければ…だっただろう」に対応する英文の形は？", correct: 0, choices: [
+        "If it had not been for A, S would have 過去分詞",
+        "If it were not for A, S would 原形",
+        "I wish S 過去",
+        "S V as if S 過去"
+      ]},
+      { q: "「〜だったらいいのに（今）」に対応する英文の形は？", correct: 3, choices: [
+        "If only S had 過去分詞",
+        "It is time S 過去",
+        "If S had 過去分詞, S would have 過去分詞",
+        "I wish S 過去"
+      ]},
+      { q: "「〜だったらよかったのに（過去）」に対応する英文の形は？", correct: 1, choices: [
+        "If only S 過去",
+        "I wish S had 過去分詞",
+        "If S were to 原形, S would 原形",
+        "It is high time S 過去"
+      ]},
+      { q: "「まるで〜であるかのように」に対応する英文の形は？", correct: 2, choices: [
+        "If S had 過去分詞, S would have 過去分詞",
+        "If only S 過去",
+        "S V as if S 過去",
+        "I wish S had 過去分詞"
+      ]},
+      { q: "「まるで〜であったかのように」に対応する英文の形は？", correct: 3, choices: [
+        "If it were not for 名詞, S would 原形",
+        "It is about time S 過去",
+        "If S 過去, S would 原形",
+        "S V as if S had 過去分詞"
+      ]},
+      { q: "「もう〜する時間だ」に対応する英文の形は？", correct: 1, choices: [
+        "If S 過去, S would 原形",
+        "It is time S 過去",
+        "If only S had 過去分詞",
+        "I wish S 過去"
+      ]},
+      { q: "「ちょうど〜してよい時間だ」に対応する英文の形は？", correct: 0, choices: [
+        "It is high time S 過去",
+        "It is time to 原形",
+        "S V as if S 過去",
+        "If S should 原形, S would 原形"
+      ]},
+      { q: "「そろそろ〜してよい時間だ」に対応する英文の形は？", correct: 3, choices: [
+        "If S were to 原形, S would 原形",
+        "If only S 過去",
+        "If S had 過去分詞, S would have 過去分詞",
+        "It is about time S 過去"
+      ]},
+      { q: "「〜だったらなあ（今）」に対応する英文の形は？", correct: 2, choices: [
+        "I wish S had 過去分詞",
+        "It is high time S 過去",
+        "If only S 過去",
+        "If S had 過去分詞, S would have 過去分詞"
+      ]},
+      { q: "「〜だったらよかったのに（過去）」に対応する英文の形は？", correct: 1, choices: [
+        "I wish S 過去",
+        "If only S had 過去分詞",
+        "If S 過去, S would 原形",
+        "It is about time S 過去"
+      ]},
+      { q: "「その時〜だったならば…だっただろう（助動詞の過去）」に対応する英文の形は？", correct: 0, choices: [
+        "If S had 過去分詞, S would/could have 過去分詞",
+        "If S 過去, S would/could 原形",
+        "If S were to 原形, S could 原形",
+        "I wish S 過去"
+      ]}
+    ];
+
+    let current = 0;
+
+    function loadQuestion() {
+      const q = questions[current];
+      document.getElementById("question").textContent = `第${current + 1}問：` + q.q;
+      const choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
+      q.choices.forEach((choice, index) => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.textContent = choice;
+        btn.onclick = () => checkAnswer(index, btn);
+        choicesDiv.appendChild(btn);
+      });
+      document.getElementById("result").textContent = "";
+      document.getElementById("nextBtn").style.display = "none";
+    }
+
+    function checkAnswer(index, button) {
+      const q = questions[current];
+      const isCorrect = index === q.correct;
+      const buttons = document.querySelectorAll(".choice");
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.correct) btn.classList.add("correct");
+        if (i === index && i !== q.correct) btn.classList.add("wrong");
+      });
+      document.getElementById("result").textContent = isCorrect
+        ? "✅ 正解にゃ！"
+        : `❌ 不正解にゃ… 正解は「${q.choices[q.correct]}」にゃ`;
+      document.getElementById("nextBtn").style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) {
+        loadQuestion();
+      } else {
+        document.getElementById("quiz").innerHTML = "<p style='font-size: 1.2em;'>🎉 全問終了にゃ！おつかれさま！</p>";
+      }
+    }
+
+    loadQuestion();
+  </script>
+
+</body>
+</html>
